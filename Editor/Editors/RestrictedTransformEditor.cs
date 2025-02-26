@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace skner.DualGrid.Editor
 {
-    [CanEditMultipleObjects]
+    /*[CanEditMultipleObjects]
     [CustomEditor(typeof(Transform))]
     public class RestrictedTransformEditor : UnityEditor.Editor
     {
@@ -21,11 +21,7 @@ namespace skner.DualGrid.Editor
                 DrawDefaultInspector();
                 GUI.enabled = true;
             }
-            else
-            {
-                DrawDefaultInspector();
-            }
         }
 
-    }
+    }*/
 }

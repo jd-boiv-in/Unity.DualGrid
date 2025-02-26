@@ -37,12 +37,12 @@ namespace skner.DualGrid.Editor
                 EditorGUILayout.EnumPopup("Orientation", tilemap.orientation);
             }
 
+            EditorGUILayout.Vector3Field("Offset", tilemap.tileAnchor);
+            EditorGUILayout.Vector3Field("Rotation", tilemap.transform.rotation.eulerAngles);
+            EditorGUILayout.Vector3Field("Scale", tilemap.transform.localScale);
+            
             using (new EditorGUI.DisabledScope(true))
             {
-                EditorGUILayout.Vector3Field("Offset", tilemap.tileAnchor);
-                EditorGUILayout.Vector3Field("Rotation", tilemap.transform.rotation.eulerAngles);
-                EditorGUILayout.Vector3Field("Scale", tilemap.transform.localScale);
-
                 showInfoFoldout = EditorGUILayout.Foldout(showInfoFoldout, "Info");
                 if (showInfoFoldout)
                 {
