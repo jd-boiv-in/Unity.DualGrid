@@ -98,7 +98,8 @@ namespace skner.DualGrid.Editor
         private static DualGridTilemapModule CreateDualGridTilemapModule(DualGridRuleTile dualGridRuleTile)
         {
             var dualGridTilemapModule = DualGridTilemapModuleEditor.CreateNewDualGridTilemap();
-
+            dualGridTilemapModule.RenderTilemap.layoutGrid.cellSize = new Vector3(2, 2, 0);
+            
             dualGridTilemapModule.transform.parent.position += _previewObjectsPositionOffset;
             UpdateDualGridTile(dualGridTilemapModule, dualGridRuleTile);
             PaintSampleTiles(dualGridTilemapModule);
@@ -113,10 +114,10 @@ namespace skner.DualGrid.Editor
             Camera camera = cameraObject.AddComponent<Camera>();
 
             camera.orthographic = true;
-            camera.transform.position = new Vector3(0, -5.5f, -10) + _previewObjectsPositionOffset;
-            camera.orthographicSize = 3;
+            camera.transform.position = new Vector3(0, -11f, -10) + _previewObjectsPositionOffset;
+            camera.orthographicSize = 6;
             camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 15f;
+            camera.farClipPlane = 50f;
             camera.backgroundColor = Color.gray;
             camera.cullingMask = -1;
 
