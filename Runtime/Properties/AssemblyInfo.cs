@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("skner.DualGrid.Editor")]
+[assembly: InternalsVisibleTo("JD.DualGrid.Editor")]

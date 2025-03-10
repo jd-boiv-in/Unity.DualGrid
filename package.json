@@ -1,7 +1,7 @@
 {
-  "name": "com.skner.dualgrid",
+  "name": "jd.boiv.in.dualgrid",
   "version": "2.0.2",
-  "displayName": "skner's Dual Grid",
+  "displayName": "Dual Grid",
   "description": "This library provides a fully integrated dual grid tilemap system.",
   "documentationUrl": "https://github.com/skner-dev/DualGrid/tree/master/Documentation~",
   "changelogUrl": "https://github.com/skner-dev/DualGrid/blob/master/CHANGELOG.md",
