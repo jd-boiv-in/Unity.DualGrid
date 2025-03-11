@@ -16,7 +16,6 @@ namespace skner.DualGrid
     /// This tile type will be used in all Render Tilemaps.
     /// </remarks>
     [Serializable]
-    [CreateAssetMenu(fileName = "DualGridRuleTile", menuName = "Scriptable Objects/DualGridRuleTile")]
     public class DualGridRuleTile : RuleTile<DualGridNeighbor>
     {
 
