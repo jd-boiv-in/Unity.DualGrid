@@ -14,6 +14,8 @@ namespace skner.DualGrid.Editor
 
         private static void HandleTilemapChange(Tilemap tilemap, Tilemap.SyncTile[] tiles)
         {
+            if (Application.isPlaying) return;
+            
             var dualGridModules = Object.FindObjectsByType<DualGridTilemapModule>(FindObjectsSortMode.None);
             foreach (var module in dualGridModules)
             {
