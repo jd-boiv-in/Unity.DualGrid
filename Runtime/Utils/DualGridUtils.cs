@@ -5,7 +5,9 @@ namespace skner.DualGrid.Utils
 {
     public static class DualGridUtils
     {
-
+        private static readonly Vector3Int[] _renderTilePositions = new Vector3Int[4];
+        private static readonly Vector3Int[] _dataTilePositions = new Vector3Int[4];
+        
         /// <summary>
         /// Gets the 4 render tile positions from a <paramref name="dataTilePosition"/>.
         /// </summary>
@@ -16,13 +18,11 @@ namespace skner.DualGrid.Utils
         /// <returns></returns>
         public static Vector3Int[] GetRenderTilePositions(Vector3Int dataTilePosition)
         {
-            return new Vector3Int[]
-            {
-                dataTilePosition + new Vector3Int(0, 0, 0),
-                dataTilePosition + new Vector3Int(1, 0, 0),
-                dataTilePosition + new Vector3Int(0, 1, 0),
-                dataTilePosition + new Vector3Int(1, 1, 0)
-            };
+            _renderTilePositions[0] = dataTilePosition + new Vector3Int(0, 0, 0);
+            _renderTilePositions[1] = dataTilePosition + new Vector3Int(1, 0, 0);
+            _renderTilePositions[2] = dataTilePosition + new Vector3Int(0, 1, 0);
+            _renderTilePositions[3] = dataTilePosition + new Vector3Int(1, 1, 0);
+            return _renderTilePositions;
         }
 
         /// <summary>
@@ -35,13 +35,11 @@ namespace skner.DualGrid.Utils
         /// <returns></returns>
         public static Vector3Int[] GetDataTilePositions(Vector3Int renderTilePosition)
         {
-            return new Vector3Int[]
-            {
-                renderTilePosition - new Vector3Int(0, 0, 0),
-                renderTilePosition - new Vector3Int(1, 0, 0),
-                renderTilePosition - new Vector3Int(0, 1, 0),
-                renderTilePosition - new Vector3Int(1, 1, 0)
-            };
+            _dataTilePositions[0] = renderTilePosition - new Vector3Int(0, 0, 0);
+            _dataTilePositions[1] = renderTilePosition - new Vector3Int(1, 0, 0);
+            _dataTilePositions[2] = renderTilePosition - new Vector3Int(0, 1, 0);
+            _dataTilePositions[3] = renderTilePosition - new Vector3Int(1, 1, 0);
+            return _dataTilePositions;
         }
 
         /// <summary>
