@@ -4,12 +4,14 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace skner.DualGrid.Editor.Extensions
 {
     public static class DualGridRuleTileExtensions
     {
-
+        public static int PixelsPerUnit = 64;
+        
         /// <summary>
         /// Applies the provided <paramref name="texture"/> to the <paramref name="dualGridRuleTile"/>.
         /// <para></para>
@@ -26,14 +28,17 @@ namespace skner.DualGrid.Editor.Extensions
             var list = texture.GetSplitSpritesFromTexture();
             if (list.Count == 1) // Assume we need to slice the texture
             {
+                dualGridRuleTile.m_DefaultColliderType = Tile.ColliderType.None;
+                
                 // Manually slice it by code
                 var texturePath = AssetDatabase.GetAssetPath(texture);
                 var textureImporter = (TextureImporter) AssetImporter.GetAtPath(texturePath);
                 if (textureImporter == null)
                     throw new Exception($"Cannot not find TextureImporter");
 
-                textureImporter.spritePixelsPerUnit = 64; // TODO: Add as a setting somewhere...
+                textureImporter.spritePixelsPerUnit = PixelsPerUnit;
                 textureImporter.spriteImportMode = SpriteImportMode.Multiple;
+                textureImporter.textureCompression = TextureImporterCompression.Compressed;
                 
                 var importerSettings = new TextureImporterSettings();
                 textureImporter.ReadTextureSettings(importerSettings);
