@@ -19,7 +19,9 @@ namespace skner.DualGrid.Editor
     [CustomEditor(typeof(DualGridBrush), false)]
     public class DualGridBrushEditor : GridBrushEditor
     {
-
+        public delegate bool ProtectEditing();
+        public static ProtectEditing OnProtectEditing;
+        
         private DualGridTilemapModule _lastDualGridTilemapModule;
 
         private DualGridPreviewTile _previewTile;
@@ -54,6 +56,8 @@ namespace skner.DualGrid.Editor
         /// </summary>
         protected virtual void ProtectAgainstEditingRenderTilemap()
         {
+            if (OnProtectEditing?.Invoke() ?? false) return;
+            
             var currentSelection = Selection.activeObject as GameObject;
             if (currentSelection == null) return;
 
@@ -75,6 +79,7 @@ namespace skner.DualGrid.Editor
 
         public override void PaintPreview(GridLayout gridLayout, GameObject brushTarget, Vector3Int position)
         {
+            // TODO: Not exactly 100% safe since I'm sure there are some edge cases, however in practice it should catch them all
             ProtectAgainstEditingRenderTilemap();
             
             if (brushTarget.TryGetComponent(out DualGridTilemapModule dualGridTilemapModule))
