@@ -75,6 +75,8 @@ namespace skner.DualGrid.Editor
 
         public override void PaintPreview(GridLayout gridLayout, GameObject brushTarget, Vector3Int position)
         {
+            ProtectAgainstEditingRenderTilemap();
+            
             if (brushTarget.TryGetComponent(out DualGridTilemapModule dualGridTilemapModule))
             {
                 BoundsInt bounds = GetBrushBounds(position);
