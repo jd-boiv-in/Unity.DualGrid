@@ -346,7 +346,9 @@ namespace skner.DualGrid.Editor
             _targetDualGridRuleTiles.ForEach(dualGridRuleTile => EditorUtility.SetDirty(dualGridRuleTile));
             SceneView.RepaintAll();
 
+#if !BAKE_TILEMAP
             _targetDualGridRuleTiles.ForEach(dualGridRuleTile => UpdateAffectedOverrideTiles(dualGridRuleTile));
+#endif
         }
 
         public override void RuleMatrixOnGUI(RuleTile tile, Rect rect, BoundsInt bounds, RuleTile.TilingRule tilingRule)

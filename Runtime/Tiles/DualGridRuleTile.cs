@@ -1,6 +1,7 @@
 using skner.DualGrid.Extensions;
 using skner.DualGrid.Utils;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static skner.DualGrid.DualGridRuleTile;
@@ -16,23 +17,24 @@ namespace skner.DualGrid
     /// This tile type will be used in all Render Tilemaps.
     /// </remarks>
     [Serializable]
-    public class DualGridRuleTile : RuleTile<DualGridNeighbor>
+    public class DualGridRuleTile : 
+#if !BAKE_TILEMAP
+        RuleTile<DualGridNeighbor>
+#else
+        TileBase
+#endif
     {
-
         [SerializeField]
         [HideInInspector]
         private Texture2D _originalTexture;
         public Texture2D OriginalTexture { get => _originalTexture; internal set => _originalTexture = value; }
 
         private DualGridDataTile _dataTile;
+        
         /// <summary>
         /// The Data Tile is a tile generated from this Dual Grid Rule Tile to populate the DataTilemap.
         /// </summary>
         public DualGridDataTile DataTile { get => _dataTile != null ? _dataTile : RefreshDataTile(); }
-
-        private DualGridTilemapModule _dualGridTilemapModule;
-
-        private Tilemap _dataTilemap;
 
         public class DualGridNeighbor
         {
@@ -48,6 +50,22 @@ namespace skner.DualGrid
             /// </summary>
             public const int NotFilled = 2;
         }
+
+        // Dual Grid package is nice, but not really optimized. BUT! This wouldn't matter if that was editor-only code,
+        // and you would think that once the tiles are placed, when the map load, it wouldn't need to call any
+        // additional code. But that is wrong, Unity will still call back all the code again to check the rules of the 
+        // tiles, despite them being already baked in Unity's serialization. Notably, `GetTileData`, also for some
+        // reason, ref `TileData` is empty instead of having, you know, the original serialized data instead...
+        // This is pretty wasteful as I don't need any additional code to run.
+        // There is a solution to this, which sounds dumb. Do not override any of the `TileBase` methods.
+        // There seems to be some Unity's magic being involved behind the scene (C++) when they are not overriden
+        // which makes the engine load the baked / serialized data as expected.
+        // At least there was a solution... And I don't need to optimize the Dual Grid package, nor reference it, since
+        // I only need it in editor to place the tiles. At runtime, all modules / codes can be removed from the package
+        // and the (render) map will load as expected (and FAST!).
+#if !BAKE_TILEMAP
+        private DualGridTilemapModule _dualGridTilemapModule;
+        private Tilemap _dataTilemap;
 
         /// <summary>
         /// Force sets the actual Data Tilemap before updating the tile, because Unity seems to move tiles between tilemaps sometimes.
@@ -206,6 +224,17 @@ namespace skner.DualGrid
                 //    $"If the tilemap is a tile palette, discard this warning, otherwise investigate it, as this tile won't work properly.", originTilemap);
             }
         }
-
+#else
+        public Sprite m_DefaultSprite;
+        public GameObject m_DefaultGameObject;
+        public Tile.ColliderType m_DefaultColliderType = Tile.ColliderType.Sprite;
+        [HideInInspector] public List<RuleTile.TilingRule> m_TilingRules = new();
+        public virtual int m_RotationAngle => 90;
+        
+        public virtual DualGridDataTile RefreshDataTile()
+        {
+            return null;
+        }
+#endif
     }
 }

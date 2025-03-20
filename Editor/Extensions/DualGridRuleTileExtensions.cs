@@ -121,7 +121,9 @@ namespace skner.DualGrid.Editor.Extensions
 
         private static void AddNewTilingRuleFromSprite(ref DualGridRuleTile tile, Sprite sprite)
         {
+#if !BAKE_TILEMAP
             tile.m_TilingRules.Add(new DualGridRuleTile.TilingRule() { m_Sprites = new Sprite[] { sprite }, m_ColliderType = UnityEngine.Tilemaps.Tile.ColliderType.None });
+#endif
         }
 
         /// <summary>
