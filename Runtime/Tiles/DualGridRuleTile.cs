@@ -2,6 +2,7 @@ using skner.DualGrid.Extensions;
 using skner.DualGrid.Utils;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static skner.DualGrid.DualGridRuleTile;
@@ -29,12 +30,22 @@ namespace skner.DualGrid
         private Texture2D _originalTexture;
         public Texture2D OriginalTexture { get => _originalTexture; internal set => _originalTexture = value; }
 
-        private DualGridDataTile _dataTile;
+        [SerializeField] private DualGridDataTile _dataTile;
+        private bool _checkDataTile;
+        private bool _hasDataTile;
+        //private bool _checkDataTilemap;
+        //private bool _hasDataTilemap;
+
+        public void ResetCache()
+        {
+            _checkDataTile = false;
+            //_checkDataTilemap = false;
+        }
         
         /// <summary>
         /// The Data Tile is a tile generated from this Dual Grid Rule Tile to populate the DataTilemap.
         /// </summary>
-        public DualGridDataTile DataTile { get => _dataTile != null ? _dataTile : RefreshDataTile(); }
+        public DualGridDataTile DataTile { get => RefreshDataTile(); }
 
         public class DualGridNeighbor
         {
@@ -85,9 +96,9 @@ namespace skner.DualGrid
             tileData.flags = TileFlags.LockTransform;
             tileData.transform = iden;
 
-            bool gameObjectShouldBeInRenderTilemap = _dualGridTilemapModule == null || _dualGridTilemapModule.GameObjectOrigin == GameObjectOrigin.RenderTilemap;
-            Matrix4x4 transform = iden;
-            foreach (TilingRule rule in m_TilingRules)
+            //bool gameObjectShouldBeInRenderTilemap = _dualGridTilemapModule == null || _dualGridTilemapModule.GameObjectOrigin == GameObjectOrigin.RenderTilemap;
+            var transform = iden;
+            foreach (var rule in m_TilingRules)
             {
                 if (RuleMatches(rule, position, tilemap, ref transform))
                 {
@@ -105,7 +116,7 @@ namespace skner.DualGrid
                             break;
                     }
                     tileData.transform = transform;
-                    tileData.gameObject = gameObjectShouldBeInRenderTilemap ? rule.m_GameObject : null;
+                    //tileData.gameObject = gameObjectShouldBeInRenderTilemap ? rule.m_GameObject : null;
                     break;
                 }
             }
@@ -117,11 +128,33 @@ namespace skner.DualGrid
         /// <returns>The refreshed data tile.</returns>
         public virtual DualGridDataTile RefreshDataTile()
         {
-            if (_dataTile == null) _dataTile = ScriptableObject.CreateInstance<DualGridDataTile>();
+            if (!_checkDataTile)
+            {
+                _checkDataTile = true;
+                _hasDataTile = _dataTile != null;
+
+#if UNITY_EDITOR
+                if (!_hasDataTile)
+                {
+                    var path = AssetDatabase.GetAssetPath(this);
+                    _dataTile = CreateInstance<DualGridDataTile>();
+                    _dataTile.gameObject = null;
+                    _dataTile.name = name;
+                    _dataTile.sprite = null;
+                    _dataTile.colliderType = Tile.ColliderType.None;
+                    _dataTile.color = Color.white;
+                    _dataTile.flags = TileFlags.LockTransform;
+                    AssetDatabase.AddObjectToAsset(_dataTile, path);
+                    _hasDataTile = _dataTile != null;
+                }
+#endif
+            }
+            
+            /*if (_dataTile == null) _dataTile = ScriptableObject.CreateInstance<DualGridDataTile>();
 
             _dataTile.name = this.name;
-            _dataTile.colliderType = this.m_DefaultColliderType;
-            _dataTile.gameObject = this.m_DefaultGameObject;
+            //_dataTile.colliderType = this.m_DefaultColliderType;
+            //_dataTile.gameObject = this.m_DefaultGameObject;*/
 
             return _dataTile;
         }
@@ -130,16 +163,13 @@ namespace skner.DualGrid
         public override bool RuleMatches(TilingRule ruleToValidate, Vector3Int renderTilePosition, ITilemap tilemap, ref Matrix4x4 transform)
         {
             // Skip custom rule validation in cases where this DualGridRuleTile is not within a valid tilemap
-            if (GetDataTilemap(tilemap) == null) return false;
+            //if (GetDataTilemap(tilemap) == null) return false;
 
-            Vector3Int[] dataTilemapPositions = DualGridUtils.GetDataTilePositions(renderTilePosition);
-
-            foreach (Vector3Int dataTilePosition in dataTilemapPositions)
+            var dataTilemapPositions = DualGridUtils.GetDataTilePositions(renderTilePosition);
+            foreach (var dataTilePosition in dataTilemapPositions)
             {
                 if (!DoesRuleMatchWithDataTile(ruleToValidate, dataTilePosition, renderTilePosition))
-                {
                     return false;
-                }
             }
 
             return true;
@@ -154,15 +184,15 @@ namespace skner.DualGrid
         /// <returns></returns>
         private bool DoesRuleMatchWithDataTile(TilingRule rule, Vector3Int dataTilePosition, Vector3Int renderTilePosition)
         {
-            Vector3Int dataTileOffset = dataTilePosition - renderTilePosition;
+            var dataTileOffset = dataTilePosition - renderTilePosition;
 
-            int neighborIndex = rule.GetNeighborIndex(dataTileOffset);
+            var neighborIndex = rule.GetNeighborIndex(dataTileOffset);
             if (neighborIndex == -1) return true; // If no neighbor is defined, it means it matches with anything.
 
             // Compiler condition ensures that EditorPreviewTiles are only considered when running inside the Unity Editor
 #if UNITY_EDITOR
             var neighborDataTile = _dataTilemap.GetEditorPreviewTile(dataTilePosition);
-            if (neighborDataTile == null) neighborDataTile = _dataTilemap.GetTile(dataTilePosition);
+            if (neighborDataTile is null) neighborDataTile = _dataTilemap.GetTile(dataTilePosition);
 #else
             var neighborDataTile = _dataTilemap.GetTile(dataTilePosition);
 #endif
@@ -173,12 +203,12 @@ namespace skner.DualGrid
         /// <inheritdoc/>
         public override bool RuleMatch(int neighbor, TileBase other)
         {
-            bool isEmptyPreviewTile = other is DualGridPreviewTile dualGridPreviewTile && dualGridPreviewTile.IsFilled == false;
+            var isEmptyPreviewTile = other is DualGridPreviewTile dualGridPreviewTile && dualGridPreviewTile.IsFilled == false;
 
             return neighbor switch
             {
-                DualGridNeighbor.Filled => !isEmptyPreviewTile && other != null,
-                DualGridNeighbor.NotFilled => isEmptyPreviewTile || other == null,
+                DualGridNeighbor.Filled => !isEmptyPreviewTile && other is not null,
+                DualGridNeighbor.NotFilled => isEmptyPreviewTile || other is null,
                 _ => true,
             };
         }
@@ -195,23 +225,28 @@ namespace skner.DualGrid
         /// <returns></returns>
         private Tilemap GetDataTilemap(ITilemap tilemap)
         {
-            if (_dualGridTilemapModule == null || _dualGridTilemapModule.DataTilemap == null)
-            {
-                SetDataTilemap(tilemap);
-            }
-
+            SetDataTilemap(tilemap);
             return _dataTilemap;
+            
+            /*if (_dualGridTilemapModule == null || _dualGridTilemapModule.DataTilemap == null)
+                SetDataTilemap(tilemap);
+
+            return _dataTilemap;*/
         }
 
         private void SetDataTilemap(ITilemap tilemap)
         {
+            //if (_checkDataTilemap) return;
+            //_checkDataTilemap = true;
+            //_hasDataTilemap = false;
+            
             var originTilemap = tilemap.GetComponent<Tilemap>();
-
             _dualGridTilemapModule = originTilemap.GetComponentInParent<DualGridTilemapModule>();
 
             if (_dualGridTilemapModule != null)
             {
                 _dataTilemap = _dualGridTilemapModule.DataTilemap;
+                //_hasDataTilemap = _dataTilemap != null;
             }
             else
             {
