@@ -163,7 +163,7 @@ namespace skner.DualGrid
         public override bool RuleMatches(TilingRule ruleToValidate, Vector3Int renderTilePosition, ITilemap tilemap, ref Matrix4x4 transform)
         {
             // Skip custom rule validation in cases where this DualGridRuleTile is not within a valid tilemap
-            //if (GetDataTilemap(tilemap) == null) return false;
+            if (GetDataTilemap(tilemap) is null) return false;
 
             var dataTilemapPositions = DualGridUtils.GetDataTilePositions(renderTilePosition);
             foreach (var dataTilePosition in dataTilemapPositions)
