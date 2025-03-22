@@ -61,6 +61,7 @@ namespace skner.DualGrid.Editor.Extensions
 
         private static void SetPreviewRenderTile(DualGridTilemapModule dualGridTilemapModule, Vector3Int previewRenderTilePosition)
         {
+#if FIX_BAKE_TILEMAP
             _previewTilesB.Add(new PreviewTileTemp()
             {
                 Position = previewRenderTilePosition,
@@ -69,14 +70,15 @@ namespace skner.DualGrid.Editor.Extensions
             
             dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, dualGridTilemapModule.RenderTile);
             dualGridTilemapModule.RenderTilemap.SetTile(previewRenderTilePosition, dualGridTilemapModule.RenderTile);
-            
-            // Old
-            //dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, dualGridTilemapModule.RenderTile);
-            //dualGridTilemapModule.RenderTilemap.RefreshTile(previewRenderTilePosition);
+#else
+            dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, dualGridTilemapModule.RenderTile);
+            dualGridTilemapModule.RenderTilemap.RefreshTile(previewRenderTilePosition);
+#endif
         }
 
         private static void UnsetPreviewRenderTile(DualGridTilemapModule dualGridTilemapModule, Vector3Int previewRenderTilePosition)
         {
+#if FIX_BAKE_TILEMAP
             dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, null);
 
             foreach (var tile in _previewTilesA)
@@ -94,10 +96,10 @@ namespace skner.DualGrid.Editor.Extensions
                 dualGridTilemapModule.RenderTilemap.SetTile(previewRenderTilePosition, dualGridTilemapModule.RenderTile);
             else
                 dualGridTilemapModule.RenderTilemap.SetTile(previewRenderTilePosition, null);
-
-            // Old
-            //dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, null);
-            //dualGridTilemapModule.RenderTilemap.RefreshTile(previewRenderTilePosition);
+#else
+            dualGridTilemapModule.RenderTilemap.SetEditorPreviewTile(previewRenderTilePosition, null);
+            dualGridTilemapModule.RenderTilemap.RefreshTile(previewRenderTilePosition);
+#endif
         }
     }
 }

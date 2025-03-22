@@ -147,32 +147,26 @@ namespace skner.DualGrid
 
         private void SetRenderTile(Vector3Int renderTilePosition)
         {
+#if FIX_BAKE_TILEMAP
             RenderTilemap.SetTile(renderTilePosition, RenderTile);
-            
-            // Old
-            /*if (!RenderTilemap.HasTile(renderTilePosition))
-            {
+#else
+            if (!RenderTilemap.HasTile(renderTilePosition))
                 RenderTilemap.SetTile(renderTilePosition, RenderTile);
-            }
             else
-            {
                 RenderTilemap.RefreshTile(renderTilePosition);
-            }*/
+#endif
         }
 
         private void UnsetRenderTile(Vector3Int renderTilePosition)
         {
+#if FIX_BAKE_TILEMAP
             RenderTilemap.SetTile(renderTilePosition, null);
-            
-            // Old
-            /*if (!IsInUseByDataTilemap(renderTilePosition) && RenderTilemap.HasTile(renderTilePosition))
-            {
+#else
+            if (!IsInUseByDataTilemap(renderTilePosition) && RenderTilemap.HasTile(renderTilePosition))
                 RenderTilemap.SetTile(renderTilePosition, null);
-            }
             else
-            {
                 RenderTilemap.RefreshTile(renderTilePosition);
-            }*/
+#endif
         }
 
         /// <summary>
