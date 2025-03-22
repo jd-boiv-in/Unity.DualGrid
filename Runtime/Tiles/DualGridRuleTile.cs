@@ -242,7 +242,8 @@ namespace skner.DualGrid
             
             var originTilemap = tilemap.GetComponent<Tilemap>();
             _dualGridTilemapModule = originTilemap.GetComponentInParent<DualGridTilemapModule>();
-
+            _dataTilemap = null;
+            
             if (_dualGridTilemapModule != null)
             {
                 _dataTilemap = _dualGridTilemapModule.DataTilemap;
