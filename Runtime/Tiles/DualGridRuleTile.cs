@@ -31,17 +31,7 @@ namespace skner.DualGrid
         public Texture2D OriginalTexture { get => _originalTexture; internal set => _originalTexture = value; }
 
         [SerializeField] private DualGridDataTile _dataTile;
-        private bool _checkDataTile;
-        private bool _hasDataTile;
-        //private bool _checkDataTilemap;
-        //private bool _hasDataTilemap;
 
-        public void ResetCache()
-        {
-            _checkDataTile = false;
-            //_checkDataTilemap = false;
-        }
-        
         /// <summary>
         /// The Data Tile is a tile generated from this Dual Grid Rule Tile to populate the DataTilemap.
         /// </summary>
@@ -77,7 +67,18 @@ namespace skner.DualGrid
 #if !BAKE_TILEMAP
         private DualGridTilemapModule _dualGridTilemapModule;
         private Tilemap _dataTilemap;
+        
+        private bool _checkDataTile;
+        private bool _hasDataTile;
+        //private bool _checkDataTilemap;
+        //private bool _hasDataTilemap;
 
+        public void ResetCache()
+        {
+            _checkDataTile = false;
+            //_checkDataTilemap = false;
+        }
+        
         /// <summary>
         /// Force sets the actual Data Tilemap before updating the tile, because Unity seems to move tiles between tilemaps sometimes.
         /// </summary>
@@ -270,6 +271,11 @@ namespace skner.DualGrid
         public virtual DualGridDataTile RefreshDataTile()
         {
             return null;
+        }
+        
+        public void ResetCache()
+        {
+            
         }
 #endif
     }
