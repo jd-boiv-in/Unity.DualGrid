@@ -9,6 +9,7 @@ namespace skner.DualGrid.Editor
     {
         static DualGridTilemapPersistentListener()
         {
+            Tilemap.tilemapTileChanged -= HandleTilemapChange;
             Tilemap.tilemapTileChanged += HandleTilemapChange;
         }
 
