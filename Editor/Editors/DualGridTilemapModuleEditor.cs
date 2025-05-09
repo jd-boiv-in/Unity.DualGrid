@@ -186,7 +186,6 @@ namespace skner.DualGrid.Editor
             }
 
             GUILayout.Space(5);
-            GUILayout.Label("Tools", EditorStyles.boldLabel);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -194,7 +193,7 @@ namespace skner.DualGrid.Editor
             }
 
             EditorGUI.BeginChangeCheck();
-            GUILayout.Label("Visualization Handles", EditorStyles.boldLabel);
+            GUILayout.Label("Tools Visualization Handles", EditorStyles.boldLabel);
             _showDataTileBoundaries = EditorGUILayout.Toggle("Data Tile Boundaries", _showDataTileBoundaries);
             _showRenderTileBoundaries = EditorGUILayout.Toggle("Render Tile Boundaries", _showRenderTileBoundaries);
             _showRenderTileConnections = EditorGUILayout.Toggle("Render Tile Connections", _showRenderTileConnections);
